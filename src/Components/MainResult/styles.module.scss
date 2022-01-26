@@ -1,0 +1,51 @@
+.mainResult {
+  padding: 2rem;
+  border-radius: 1rem 1rem 0 0;
+  margin-bottom: 0;
+  background-color: var(--gray-800);
+
+  display: flex;
+  justify-content: space-around;
+  
+  @media (max-width: 720px) {
+    flex-flow: column-reverse;
+  }
+
+  .dataContainer {
+    flex-shrink: 3;
+
+    h2 {
+      font-size: 1.5rem;
+      line-height: 2rem;
+      margin-bottom: 0.5rem;
+      color: var(--gray-100);
+    }
+
+    strong {
+      display: block;
+      line-height: 1.5rem;
+      color: var(--yellow-500);
+    }
+
+    p {
+      line-height: 1.2rem;
+      text-align: justify;
+    }
+
+    p:last-child {
+      color: var(--gray-300);
+    }
+  }
+
+  .imageContainer {
+    position: relative;
+    height: 20rem;
+    width: 20rem;
+    margin-left: 1.5rem;
+    flex-shrink: 1;
+
+    img {
+      border-radius: 0.5rem;
+    }
+  }
+}

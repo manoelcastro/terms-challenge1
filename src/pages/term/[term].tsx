@@ -1,20 +1,39 @@
 import axios from 'axios';
-import type { NextPage } from 'next';
+import type { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { FcPlus, FcSearch } from 'react-icons/fc';
 import { toast } from 'react-toastify';
-import styles from '../../styles/home.module.scss';
-import InputBox from '../Components/InputBox';
+import InputBox from '../../Components/InputBox';
+import MainResult from '../../Components/MainResult';
+import RelatedResults from '../../Components/RelatedResults';
+import PrismaConnection from '../../config/connecction';
+import styles from './styles.module.scss';
 
-const Home: NextPage = () => {
+type Related = {
+  id: string;
+  title: string;
+  description: string;
+};
+
+type TermsPageProps = {
+  termExists:
+    | {
+        title: string;
+        description: string;
+        image?: string;
+        url: string;
+        relateds: Related[];
+      }
+    | boolean;
+};
+
+const Terms: NextPage<TermsPageProps> = ({ termExists }: TermsPageProps) => {
   const [searchValue, setSearchValue] = useState('');
   const [saveValue, setSaveValue] = useState('');
-
+  const router = useRouter();
   const iconSearch = () => <FcSearch />;
   const iconSave = () => <FcPlus />;
-
-  const router = useRouter();
 
   const handleSharedTermSubimit = () => {
     if (searchValue === '') {
@@ -48,6 +67,13 @@ const Home: NextPage = () => {
     }
   };
 
+  if (!termExists) {
+    toast.error('Opa, não temos esse termo em nosso banco de dados!', {
+      toastId: new Date().toString(),
+    });
+    router.push('/');
+  }
+
   return (
     <main className={styles.contentContainer}>
       <section className={styles.termsInputsContainer}>
@@ -58,10 +84,10 @@ const Home: NextPage = () => {
         </h1>
         <InputBox
           handleValue={setSaveValue}
+          handleSubmit={handleSaveTermSubmit}
           value={saveValue}
           icon={iconSave}
-          placeholder="Gravar Termo"
-          handleSubmit={handleSaveTermSubmit}
+          placeholder="Salvar Termo"
         />
         <InputBox
           handleValue={setSearchValue}
@@ -71,8 +97,33 @@ const Home: NextPage = () => {
           handleSubmit={handleSharedTermSubimit}
         />
       </section>
+      {!termExists ? (
+        <section className={styles.termsResultCotainer} />
+      ) : (
+        <section className={styles.termsResultCotainer}>
+          <MainResult term={termExists} />
+          <RelatedResults relateds={termExists.relateds} />
+        </section>
+      )}
     </main>
   );
 };
 
-export default Home;
+export const getServerSideProps: GetServerSideProps = async context => {
+  const prisma = PrismaConnection.getConnection();
+
+  const term = context.params.term as string;
+
+  const termExists = await prisma.term.findFirst({
+    where: { term },
+    include: { relateds: true },
+  });
+
+  if (!termExists) {
+    return { props: { termExists: false } };
+  }
+
+  return { props: { termExists } };
+};
+
+export default Terms;
