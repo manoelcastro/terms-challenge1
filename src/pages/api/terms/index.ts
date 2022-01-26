@@ -8,7 +8,8 @@ type Related = {
 };
 
 type ResponseMessage = {
-  message: string;
+  message?: string;
+  error?: string;
 };
 
 type TermResearched = {
@@ -32,7 +33,7 @@ export default async function handler(
   const termExists = await prisma.term.findFirst({ where: { term } });
 
   if (termExists) {
-    return response.json({ message: 'exist' });
+    return response.status(403).send({ error: 'exist' });
   }
 
   try {
@@ -54,10 +55,10 @@ export default async function handler(
         },
       });
 
-      return response.json({ message: 'salvo' });
+      return response.status(200).json({ message: 'salvo' });
     }
-    return response.status(500);
+    return response.status(500).json({ error: 'Outro erro não mapeado' });
   } catch (e) {
-    return response.json({ message: 'notFound' });
+    return response.status(404).json({ error: 'notFound' });
   }
 }

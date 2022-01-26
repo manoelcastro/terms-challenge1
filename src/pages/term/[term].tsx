@@ -1,7 +1,7 @@
 import axios from 'axios';
 import type { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { FcPlus, FcSearch } from 'react-icons/fc';
 import { toast } from 'react-toastify';
 import InputBox from '../../Components/InputBox';
@@ -31,37 +31,34 @@ type TermsPageProps = {
 const Terms: NextPage<TermsPageProps> = ({ termExists }: TermsPageProps) => {
   const [searchValue, setSearchValue] = useState('');
   const [saveValue, setSaveValue] = useState('');
-  const [save, setSave] = useState('');
   const router = useRouter();
+
   const iconSearch = () => <FcSearch />;
   const iconSave = () => <FcPlus />;
 
-  // eslint-disable-next-line consistent-return
-  useEffect(() => {
-    if (save === '') {
-      return null;
-    }
+  async function saveTerm(save: string) {
     try {
-      const main = async () => {
-        const response = await axios.get(`/api/terms?term=${save}`);
-
-        if (response.data.message === 'exist') {
-          toast.error(
-            'Esse termo já existe em nosso banco de dados, tente fazer uma busca por ele! 🔎',
-          );
-          return;
-        }
-        if (response.data.message === 'notFound') {
-          toast.error('Esse termo não existe na Wikipédia 😩');
-          return;
-        }
+      const response = await axios.get(`/api/terms?term=${save}`);
+      if (response.status === 200) {
         toast.success('Termo adicionado com sucesso');
-      };
-      main();
-    } catch (e) {
-      toast.error(e.message);
+        router.push('/');
+        return;
+      }
+    } catch (error) {
+      const { status } = error.response;
+      if (status === 403) {
+        toast.error(
+          'Esse termo já existe em nosso banco de dados, tente fazer uma busca por ele! 🔎',
+        );
+        return;
+      }
+      if (status === 404) {
+        toast.error('Esse termo não existe na Wikipédia 😩');
+        return;
+      }
+      toast.error('Aconteceu um erro não mapeado');
     }
-  }, [save]);
+  }
 
   const handleSharedTermSubimit = () => {
     if (searchValue === '') {
@@ -74,8 +71,8 @@ const Terms: NextPage<TermsPageProps> = ({ termExists }: TermsPageProps) => {
   };
 
   const handleSaveTermSubmit = async () => {
-    const saved = saveValue.toLowerCase().replace(' ', '&');
-    setSave(saved);
+    const save = saveValue.toLowerCase().replace(' ', '&');
+    saveTerm(save);
   };
 
   if (!termExists) {

@@ -27,13 +27,20 @@ const Dump: NextPage = () => {
     const mappedIsOk = terms.map(async term =>
       axios.get(`/api/terms?term=${term}`),
     );
-    if (mappedIsOk) {
-      toast.success('Dump concluído! 🕵️‍♂️');
-      router.push('/');
-    }
+    Promise.all(mappedIsOk)
+      .then(() => {
+        toast.success('Dump concluído! 🕵️‍♂️');
+        router.push('/');
+      })
+      .catch(error => toast.error(error));
+  }
+
+  function handleClick(event: React.MouseEvent) {
+    event.preventDefault();
+    gerarDump();
   }
   return (
-    <button type="button" className={styles.button} onClick={() => gerarDump()}>
+    <button type="button" className={styles.button} onClick={handleClick}>
       Gerar Dump
     </button>
   );
