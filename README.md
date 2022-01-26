@@ -24,8 +24,9 @@ e outras...
 
 ## Instruções de uso
 1. Clone o repositório no github
-2. Execute o comando "docker compose up" no diretório raiz do projeto
    > Verifique se as portas 3000 | 5432 estão liberadas
+2. Execute os comandos "yarn" e depois "docker compose up" no diretório raiz do projeto;
+   
    > Esse comando irá construir e configurar o app e o banco de dados Postgres
 3. Acesse http://localhost:3000
 4. Teste a aplicação.
