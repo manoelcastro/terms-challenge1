@@ -1,5 +1,6 @@
 # terms-challenge1
 Desafio solicitado pela equipe da SimpleAds para preenchimento de vaga DEV
+Link da proposição do desafio: https://github.com/manoelcastro/challenge-01
 
 ## Funcionamento da Aplicação
 A aplicação possui dois campos de pesquisa:
@@ -20,7 +21,9 @@ A lateral direita é separada para mostrar os resultados das pesquisas do usuár
 * PrismaIO
 * React-toastfy
 * Axios
+* Docker
 e outras...
+![image](https://user-images.githubusercontent.com/22608927/151187104-02497a75-ab87-491c-8791-8082d843955f.png)
 
 ## Instruções de uso
 1. Clone o repositório no github
@@ -33,3 +36,6 @@ e outras...
 
 Acesse a rota http://localhost:3000/dump para popular o banco de dados com os seguintes termos:
 >[arroz, matrix, tesoura, manga, pitomba, maranhao, hungria, harry, jumper, paz, aprovacao, como, dev]
+
+OBS: Essa aplicação utiliza a imagem gallium-alpine -> alguns computadores como o Apple M1 precisam de configurações extras para rodar.
+> Alternativamente, você pode rodar a imagem do container Postgres e modificar no arquivo .env o host do DB -> troque database:5432 por localhost:5432
