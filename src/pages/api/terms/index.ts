@@ -32,7 +32,7 @@ export default async function handler(
   const termExists = await prisma.term.findFirst({ where: { term } });
 
   if (termExists) {
-    return response.status(200).json({ message: 'exist' });
+    return response.json({ message: 'exist' });
   }
 
   try {
@@ -54,10 +54,10 @@ export default async function handler(
         },
       });
 
-      return response.status(200).json({ message: 'salvo' });
+      return response.json({ message: 'salvo' });
     }
     return response.status(500);
   } catch (e) {
-    return response.status(200).json({ message: 'notFound' });
+    return response.json({ message: 'notFound' });
   }
 }
